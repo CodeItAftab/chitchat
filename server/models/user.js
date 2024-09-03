@@ -28,9 +28,6 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Password is required."],
     },
-    passwordConfirm: {
-      type: String,
-    },
     passwordChangedAt: {
       type: Date,
     },
@@ -74,6 +71,14 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew || !this.password)
+    return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
 // userSchema.pre("save", async function (next) {
 //   if (!this.isModified("otp")) return next();
 
@@ -102,6 +107,8 @@ userSchema.methods.createPasswordResetToken = async function () {
 
   this.passwordResetTokenExpires = Date.now() + 10 * 60 * 1000;
 
+  console.log(resetToken);
+  await this.save();
   return resetToken;
 };
 

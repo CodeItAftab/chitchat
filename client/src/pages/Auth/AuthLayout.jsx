@@ -1,12 +1,18 @@
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
-function Home() {
+function AuthLayout() {
   const { isLoggedIn } = useSelector((state) => state.auth);
+
   if (isLoggedIn) {
     return <Navigate to={"/inbox"} replace={true} />;
   }
-  return <Navigate to={"/auth/login"} replace={true} />;
+
+  return (
+    <div className="h-full w-full">
+      <Outlet />
+    </div>
+  );
 }
 
-export default Home;
+export default AuthLayout;

@@ -9,6 +9,7 @@ const rootPersistConfig = {
   key: "root",
   storage,
   keyPrefix: "redux-",
+  blacklist: ["app"],
   whiteList: ["auth"],
 };
 

@@ -7,7 +7,7 @@ const mailService = require("../services/mailer");
 const bcrypt = require("bcryptjs");
 
 const signToken = (userId, email) => {
-  jwt.sign({ userId, email }, process.env.JWT_SECRET);
+  return jwt.sign({ userId, email }, process.env.JWT_SECRET);
 };
 
 exports.register = async (req, res, next) => {
@@ -26,6 +26,7 @@ exports.register = async (req, res, next) => {
 
     // * Check if a verified user with given email exists
     const existing_user = await User.findOne({ email });
+
     if (existing_user && existing_user.verified) {
       const error = new Error("Email is already in use, Please login.");
       error.statusCode = 422;
@@ -76,13 +77,12 @@ exports.sendOTP = async (req, res, next) => {
   //   TODO Send Mail to user
 
   try {
-    const result = await mailService.sendEmail({
+    await mailService.sendEmail({
       from: "aftabalamk7a@gmail.com",
       to: "aftabalamdlm@gmail.com",
       subject: "Verify your OTP",
       text: `Here is your OTP ${new_otp}. This OTP is valid for only 10 minutes.`,
     });
-    console.log(result);
     res
       .status(200)
       .json({ status: "success", message: "otp sent successfully." });
@@ -96,8 +96,10 @@ exports.verifyOTP = async (req, res, next) => {
   const { email, otp } = req.body;
 
   try {
-    const user = User.findOne({ email, otp_expiry_time: { $gt: Date.now() } });
-
+    const user = await User.findOne({
+      email,
+      otp_expiry_time: { $gt: Date.now() },
+    });
     if (!user) {
       const error = new Error("Invalid email or OTP expired");
       error.statusCode = 401;
@@ -119,9 +121,11 @@ exports.verifyOTP = async (req, res, next) => {
     // logging in user
     const token = signToken(user._id, user.email);
 
-    res
-      .status(200)
-      .json({ stauts: "success", message: "OTP verified successfully", token });
+    res.status(200).json({
+      stauts: "success",
+      message: "OTP verified successfully",
+      token,
+    });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -136,9 +140,6 @@ exports.forgotPassword = async (req, res, next) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    // const error = new Error("There is no user with given email address.");
-    // error.statusCode = 400;
-    // throw error;
     res
       .status(400)
       .json({ status: "error", message: "There is no user with given email." });
@@ -146,8 +147,9 @@ exports.forgotPassword = async (req, res, next) => {
     return;
   }
 
-  const resetToken = user.createPasswordResetToken();
+  const resetToken = await user.createPasswordResetToken();
   const resetURL = `http://localhost:3000/auth/reset-password/${resetToken}`;
+  console.log(resetURL);
   try {
     // TODO => Send email to user with reset url
 
@@ -165,11 +167,6 @@ exports.forgotPassword = async (req, res, next) => {
       message: "There was an error sending the email, Please try again later.",
     });
     return;
-
-    // if (!error.statusCode) {
-    //   error.statusCode = 500;
-    // }
-    // next(error);
   }
 };
 
@@ -179,19 +176,18 @@ exports.resetPassword = async (req, res, next) => {
     .update(req.params.token)
     .digest("hex");
   const user = await User.findOne({
-    passwordResetToken: token,
+    passwordResetToken: hashedToken,
     passwordResetTokenExpires: { $gt: Date.now() },
   });
 
   if (!user) {
     res
-      .stauts(400)
+      .status(400)
       .json({ status: "error", message: "Token is invalid or expired." });
     return;
   }
 
   user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
   user.passwordResetToken = undefined;
   user.passwordResetTokenExpires = undefined;
   await user.save();

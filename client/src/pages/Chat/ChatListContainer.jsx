@@ -10,7 +10,6 @@ import ChatList from "./ChatList";
 
 function ChatListContainer() {
   const show = useSelector((state) => state.app.showMainBox);
-  console.log(show);
   return (
     <div
       className={`chatList-container lg:h-full ${

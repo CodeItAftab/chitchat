@@ -5,11 +5,21 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { useState } from "react";
 
 import toast from "react-hot-toast";
 
 export default function Otp() {
+  const [otp, setOtp] = useState(null);
   const notify = () => toast.success("Here is your toast.", { duration: 2000 });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // const url = "http://localhost:3000/auth/verify-otp";
+  };
+
+  console.log(otp);
 
   return (
     <div className="w-full lg:grid  lg:grid-cols-2 h-full">
@@ -24,12 +34,13 @@ export default function Otp() {
           </div>
           <form
             className="grid gap-10 mx-auto items-start"
-            onSubmit={(e) => {
-              e.preventDefault();
-              console.log(e.target[0].value);
-            }}
+            onSubmit={handleSubmit}
           >
-            <InputOTP maxLength={6} className="w-[calc(100%-40px)] ">
+            <InputOTP
+              maxLength={6}
+              className="w-[calc(100%-40px)] "
+              onChange={(value) => setOtp(value)}
+            >
               <InputOTPGroup>
                 <InputOTPSlot className="border-slate-400" index={0} />
                 <InputOTPSlot className="border-slate-400" index={1} />
