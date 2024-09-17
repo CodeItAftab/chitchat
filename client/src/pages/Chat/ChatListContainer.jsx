@@ -17,7 +17,7 @@ function ChatListContainer() {
       }  lg:w-[calc(100%-64px)] w-full flex`}
     >
       <div
-        className={`chats-container box-border overflow-auto  h-full lg:w-[340px] w-full bg-white border-r-[1px] flex flex-col gap-1 ${
+        className={`chats-container box-border overflow-auto  h-full lg:w-[340px] w-full bg-white  flex flex-col gap-1 ${
           show && "chats-container-hide"
         }`}
       >
@@ -46,7 +46,7 @@ function ChatListContainer() {
         <ChatList />
       </div>
       {show && (
-        <div className="chat-box flex-grow h-full">
+        <div className="chat-box flex-grow h-full  ">
           <Outlet />
         </div>
       )}

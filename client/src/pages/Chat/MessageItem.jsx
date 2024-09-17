@@ -30,13 +30,13 @@ const TextMessage = ({ message }) => {
             className={`message  p-2 inline-block text-sm  w-fit lg:max-w-[700px] max-w-[400px]  rounded-[8px]   ${
               message.sender
                 ? "bg-[#3582ff] text-white  order-2"
-                : "bg-white text-black"
+                : "bg-[whitesmoke] text-black"
             }`}
           >
             {message.message}
           </p>
           <div className="lg:inline-block shrink-0 hidden cursor-pointer">
-            <DotsThreeVertical size={20} />
+            <DotsThreeVertical size={16} />
           </div>
         </div>
         <span

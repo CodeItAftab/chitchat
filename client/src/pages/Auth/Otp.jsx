@@ -1,3 +1,4 @@
+import { login, verifyOtp } from "@/app/slices/auth";
 import { Button } from "@/components/ui/button";
 import {
   InputOTP,
@@ -8,18 +9,39 @@ import {
 import { useState } from "react";
 
 import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 
 export default function Otp() {
   const [otp, setOtp] = useState(null);
-  const notify = () => toast.success("Here is your toast.", { duration: 2000 });
+
+  const dispatch = useDispatch();
+  const { isLoggedIn } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // const url = "http://localhost:3000/auth/verify-otp";
+    const getEmail = localStorage.getItem("email");
+    try {
+      const { payload } = await dispatch(
+        verifyOtp({ email: getEmail, otp: otp })
+      );
+      console.log(payload);
+      const { status, message, token, email, userId } = payload;
+      if (status === "success") {
+        toast.success(message);
+        dispatch(login({ isLoggedIn: true, token, email, userId }));
+      } else {
+        console.log(message);
+      }
+      localStorage.removeItem("email");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  console.log(otp);
+  if (isLoggedIn) {
+    return <Navigate to={"/"} replace={true} />;
+  }
 
   return (
     <div className="w-full lg:grid  lg:grid-cols-2 h-full">
@@ -56,8 +78,8 @@ export default function Otp() {
                 <InputOTPSlot className="border-slate-400" index={5} />
               </InputOTPGroup>
             </InputOTP>
-            <Button type="submit" className="w-full mx-auto" onClick={notify}>
-              Reset Password
+            <Button type="submit" className="w-full mx-auto">
+              Verify OTP
             </Button>
           </form>
         </div>

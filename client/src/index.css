@@ -104,11 +104,13 @@
 }
 
 
-.friends-container::-webkit-scrollbar {
+.friends-container::-webkit-scrollbar,
+.friends-suggestion-container::-webkit-scrollbar {
   display: none;
 }
 
-.friends-container {
+.friends-container,
+.friends-suggestion-container {
   -ms-overflow-style: none;
   /* IE and Edge */
   scrollbar-width: none;
@@ -125,11 +127,19 @@
 }
 
 
+.chat-box,
+.people-you-may-know {
+  box-shadow: -2px 0px 5px -5px #000000db;
+}
 
 
 @media only screen and (max-width: 1024px) {
   .chats-container-hide {
     display: none;
+  }
+
+  .chat-box {
+    box-shadow: none;
   }
 }
 

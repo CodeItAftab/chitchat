@@ -41,7 +41,7 @@ router.post(
 
 router.post("/send-otp", sendOTP);
 
-router.post("/verify", verifyOTP);
+router.post("/verify-otp", verifyOTP);
 
 router.post("/forgot-password", forgotPassword);
 

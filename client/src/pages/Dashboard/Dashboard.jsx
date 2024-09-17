@@ -11,7 +11,7 @@ function Dashboard() {
   }
 
   return (
-    <div className="dasahboard h-full w-full bg-[#fafafa] relative flex lg:flex-row flex-col">
+    <div className="dasahboard h-full w-full  relative flex lg:flex-row flex-col">
       <Navbar />
       <Outlet />
       <NavSmall />

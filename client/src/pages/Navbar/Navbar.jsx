@@ -10,26 +10,52 @@ import {
   Gear,
   Moon,
   Sun,
-  FramerLogo,
+  ChatsTeardrop,
+  UserCircle,
+  SignOut,
+  GearSix,
+  MoonStars,
 } from "phosphor-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
+
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { NavLink, useNavigate } from "react-router-dom";
+import { logout } from "@/app/slices/auth";
+import { Switch } from "@/components/ui/switch";
+// import AvatarWithoutStatus from "@/components/custom/AvatarWithoutStatus";
 
 function Navbar() {
   const [day, setDay] = useState(true);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const showNavbar = useSelector((state) => state.app.showMainBox);
   return (
     <nav
-      className={` lg:h-full lg:w-20 w-full h-12 lg:bg-[#77bcff45] bg-white flex lg:flex-col justify-between z-[11]  lg:shadow-[0_0_2px_rgba(0,0,0,0.25)] navbar ${
+      className={` lg:h-full lg:w-20 w-full h-12 lg:bg-[#edf4ff] bg-white flex lg:flex-col justify-between z-[11]   navbar ${
         showNavbar && "lg:flex hidden"
       }`}
     >
       <div className="flex lg:flex-col lg:justify-start justify-between lg:h-full lg:w-20 w-full h-12 lg:gap-12">
         <header className="logo-container lg:w-full lg:h-16 w-16 h-full  leading-none flex items-center justify-center">
-          <IconButton>
-            <FramerLogo size={28} color="black" />
+          <IconButton onClick={() => navigate("/")}>
+            <ChatsTeardrop size={32} color="#1976d4" weight="fill" />
           </IconButton>
         </header>
         <ul className="nav-items-list flex lg:w-full lg:h-56 lg:flex-col items-center  lg:gap-3 lg:py-4  ">
@@ -120,18 +146,66 @@ function Navbar() {
           </li>
 
           <li className="nav-item w-[calc(100%-0.75rem)] h-12  flex items-center justify-center rounded-sm  lg:hidden mx-4 ">
-            <IconButton
-              className="p-0 mr-2 hover:bg-transparent"
-              sx={{
-                border: "1px solid rgba(0,0,0,0.5)",
-                padding: "0",
-              }}
-            >
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={faker.image.avatar()} />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-            </IconButton>
+            <Sheet>
+              <SheetTrigger asChild>
+                <IconButton
+                  className="p-0 mr-2 hover:bg-transparent"
+                  sx={{
+                    border: "1px solid rgba(0,0,0,0.5)",
+                    padding: "0",
+                  }}
+                >
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={faker.image.avatar()} />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                </IconButton>
+              </SheetTrigger>
+              <SheetContent side={"right"} className="w-full">
+                <SheetHeader className="items-start">
+                  <SheetTitle className="flex items-center justify-center gap-2 ">
+                    <ChatsTeardrop size={28} color="#1976d4" weight="fill" />
+                    <h2 className="text-2xl font-normal leading-none">Viby</h2>
+                  </SheetTitle>
+                </SheetHeader>
+                <ul className="sidebar-menu h-full w-full flex flex-col justify-between grow  py-8">
+                  <div className="w-full flex flex-col gap-2">
+                    {/* <li className="w-full h-[56px] px-2 flex gap-2 text-lg leading-none items-center justify-between self-end bg-slate-100 rounded-lg">
+                      <div className="h-full w-1/2 flex items-center gap-2">
+                        <div className="h-8 w-8 shrink-0">
+                          <AvatarWithoutStatus />
+                        </div>
+                        UserName
+                      </div>
+                    </li> */}
+                    <li className="w-full h-[48px]  flex gap-2 text-lg leading-none items-center hover:text-[#1976d4] ">
+                      <UserCircle size={20} />
+                      View Profile
+                    </li>
+                    <Separator />
+                    <li className="w-full h-[48px]  flex gap-2 text-lg leading-none items-center hover:text-[#1976d4]">
+                      <GearSix size={20} />
+                      Settings
+                    </li>
+                    <Separator />
+                    <li
+                      className="w-full h-[48px]  flex gap-2 text-lg leading-none items-center hover:text-[#1976d4]"
+                      onClick={() => dispatch(logout())}
+                    >
+                      <SignOut size={20} />
+                      Logout
+                    </li>
+                  </div>
+                  <li className="w-full h-[56px] px-2 flex gap-2 text-lg leading-none items-center justify-between self-end bg-slate-100 rounded-lg">
+                    <div className="h-full w-1/2 flex items-center gap-2 leading-none">
+                      <MoonStars size={20} />
+                      <span className="leading-none">Dark Mode</span>
+                    </div>
+                    <Switch />
+                  </li>
+                </ul>
+              </SheetContent>
+            </Sheet>
           </li>
         </ul>
       </div>
@@ -151,18 +225,30 @@ function Navbar() {
           </IconButton>
         </li>
         <li className="nav-item w-[calc(100%-0.75rem)] h-12  flex items-center justify-center rounded-sm ">
-          <IconButton size="small">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={faker.image.avatar()} />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-          </IconButton>
-          {/* <Button variant="ghost" className="bg-transparent p-0">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={faker.image.avatar()} />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-          </Button> */}
+          <DropdownMenu className="ml-4">
+            <DropdownMenuTrigger className="border-none  outline-none focus:outline-none">
+              <IconButton size="small">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={faker.image.avatar()} />
+                  <AvatarFallback>User</AvatarFallback>
+                </Avatar>
+              </IconButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="ml-4">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="flex gap-2 items-center">
+                <UserCircle size={18} /> View Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="flex gap-2 items-center"
+                onClick={() => dispatch(logout())}
+              >
+                <SignOut size={18} />
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </li>
       </ul>
     </nav>

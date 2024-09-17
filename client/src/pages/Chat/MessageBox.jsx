@@ -133,8 +133,8 @@ function MessageBox() {
     });
   }, []);
   return (
-    <div className="h-full w-full flex flex-col ">
-      <header className="messagebox-header h-16 w-full bg-blue-50 px-3 border-b-[1px] flex justify-between items-center">
+    <div className="h-full w-full flex flex-col bg-white ">
+      <header className="messagebox-header h-14 w-full  px-3 border-b-[1px] flex justify-between items-center">
         <div className="chat-user-info h-full flex items-center gap-3">
           <IconButton
             sx={{
@@ -151,7 +151,9 @@ function MessageBox() {
             <AvatarWithStatus />
           </div>
           <div className="header-user-info h-full flex flex-col justify-center gap-1">
-            <h3 className="text-lg leading-none">{faker.person.fullName()}</h3>
+            <h3 className="text-base leading-none">
+              {faker.person.fullName()}
+            </h3>
             <span className="user-online-status text-[10px] leading-none">
               Online
             </span>
@@ -169,13 +171,13 @@ function MessageBox() {
           </IconButton>
         </div>
       </header>
-      <ul className="messages-box bg-blue-50 w-full lg:h-[calc(100%-128px)] h-[calc(100%-112px)] px-3 py-4 flex flex-col-reverse gap-4  overflow-auto">
+      <ul className="messages-box  w-full lg:h-[calc(100%-128px)] h-[calc(100%-112px)] px-3 py-4 flex flex-col-reverse gap-4  overflow-auto">
         {chatHistory.map((chat) => {
           return <MessageItem key={faker.person.bio()} message={chat} />;
         })}
       </ul>
-      <form className="message-input-container  h-16 w-full bg-blue-50  border-t-[1px] flex items-center justify-evenly lg:px-4 z-10">
-        <div className="message-input h-10 w-[calc(100%-80px)] flex items-center bg-blue-100  rounded-[6px] overflow-hidden border-[2px_solid_black]">
+      <form className="message-input-container  h-16 w-full   border-t-[1px] flex items-center justify-evenly lg:px-4 z-10">
+        <div className="message-input h-10 w-[calc(100%-80px)] flex items-center bg-blue-50  rounded-[6px] overflow-hidden border-[2px_solid_black]">
           <input
             className="h-10 w-[calc(100%-40px)] px-3 leading-none outline-none rounded-[6px] bg-transparent text-black"
             type="text"

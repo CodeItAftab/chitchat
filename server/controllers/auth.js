@@ -27,7 +27,7 @@ exports.register = async (req, res, next) => {
     // * Check if a verified user with given email exists
     const existing_user = await User.findOne({ email });
 
-    if (existing_user && existing_user.verified) {
+    if (existing_user && existing_user.verified === true) {
       const error = new Error("Email is already in use, Please login.");
       error.statusCode = 422;
       throw error;
@@ -122,8 +122,10 @@ exports.verifyOTP = async (req, res, next) => {
     const token = signToken(user._id, user.email);
 
     res.status(200).json({
-      stauts: "success",
+      status: "success",
       message: "OTP verified successfully",
+      email: user.email,
+      userId: user._id,
       token,
     });
   } catch (error) {
@@ -148,13 +150,13 @@ exports.forgotPassword = async (req, res, next) => {
   }
 
   const resetToken = await user.createPasswordResetToken();
-  const resetURL = `http://localhost:3000/auth/reset-password/${resetToken}`;
+  const resetURL = `http://localhost:5173/auth/new-password/${resetToken}`;
   console.log(resetURL);
   try {
     // TODO => Send email to user with reset url
 
     res.status(200).json({
-      stauts: "success",
+      status: "success",
       message: "Reset Password link sent to email",
     });
   } catch (error) {
@@ -180,17 +182,20 @@ exports.resetPassword = async (req, res, next) => {
     passwordResetTokenExpires: { $gt: Date.now() },
   });
 
+  console.log(req.params.token, req.body.password);
+
   if (!user) {
     res
       .status(400)
       .json({ status: "error", message: "Token is invalid or expired." });
     return;
   }
+  console.log(req.body.password);
 
   user.password = req.body.password;
   user.passwordResetToken = undefined;
   user.passwordResetTokenExpires = undefined;
-  await user.save();
+  await user.save({ validateModifiedOnly: true });
 
   // * Login the user and send new jwt
 
@@ -201,6 +206,8 @@ exports.resetPassword = async (req, res, next) => {
   res.status(200).json({
     status: "success",
     message: "Password changed successfully",
+    email: user.email,
+    userId: user._id,
     token,
   });
 };
@@ -232,6 +239,8 @@ exports.login = async (req, res, next) => {
       status: "success",
       message: "Logged in successfully",
       token,
+      email: user.email,
+      userId: user._id,
     });
   } catch (error) {
     if (!error.statusCode) {

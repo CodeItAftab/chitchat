@@ -1,14 +1,14 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import googlLogo from "../../assets/google.svg";
 
 import PropTypes from "prop-types";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
-import { login } from "@/app/slices/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { login, loginUser, registerUser } from "@/app/slices/auth";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 Auth.propTypes = {
   isLoginPage: PropTypes.bool,
@@ -20,48 +20,51 @@ export default function Auth({ isLoginPage }) {
     email: "",
     password: "",
   });
-
+  const { isLoggedIn } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
-    let data;
-    try {
-      if (isLoginPage) {
-        data = { email: formData.email, password: formData.password };
-      } else {
-        data = { ...formData };
-      }
-
-      const url = `http://localhost:3000/auth/${
-        isLoginPage ? "login" : "register"
-      }`;
-
-      console.log(data);
-      const resp = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const res = await resp.json();
-      if (res.status === "success") {
-        toast.success(res.message, { duration: 3000 });
-        if (isLoginPage) {
-          dispatch(login({ isLoggedIn: true, token: res.token }));
-        } else {
-          navigate("/auth/verify-otp", { replace: true });
+    if (isLoggedIn) {
+      try {
+        const { payload } = await dispatch(
+          registerUser({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+          })
+        );
+        const { status, message } = payload;
+        if (status === "success") {
+          toast.success(message);
+          navigate("/auth/verify-otp");
+        } else if (status === "error") {
+          toast.error(message);
         }
-      } else if (res.status === "error") {
-        toast.error("Incorrect Email or password", { duration: 3000 });
+      } catch (error) {
+        console.log(error);
       }
-      console.log(res);
-    } catch (error) {
-      console.log(error);
+    } else {
+      try {
+        const { payload } = await dispatch(
+          loginUser({ email: formData.email, password: formData.password })
+        );
+        const { status, token, email, userId, message } = payload;
+        if (status === "success") {
+          toast.success(message);
+          dispatch(login({ isLoggedIn: true, token, email, userId }));
+        } else if (status === "error") {
+          toast.error(message);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
+  }
+
+  if (isLoggedIn) {
+    return <Navigate to={"/"} />;
   }
 
   return (
@@ -137,14 +140,16 @@ export default function Auth({ isLoginPage }) {
                 }
               />
             </div>
-            <Link
-              to="/reset-password"
-              className=" inline-block text-sm underline"
-            >
-              Forgot your password?
-            </Link>
+            {isLoginPage && (
+              <Link
+                to="/auth/reset-password"
+                className=" inline-block text-sm underline"
+              >
+                Forgot your password?
+              </Link>
+            )}
             <Button type="submit" className="w-full">
-              Login
+              {isLoginPage ? "Login" : "Register"}
             </Button>
             <Button
               variant="outline"
@@ -155,9 +160,12 @@ export default function Auth({ isLoginPage }) {
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?
-            <Link href="#" className="underline">
-              Sign up
+            {isLoginPage ? "Don't" : "Already"} have an account?
+            <Link
+              to={isLoginPage ? "/auth/register" : "/auth/login"}
+              className="underline"
+            >
+              {isLoginPage ? "Sign up" : "Login"}
             </Link>
           </div>
         </div>
