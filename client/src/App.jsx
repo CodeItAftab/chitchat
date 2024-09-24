@@ -15,7 +15,7 @@ const Dashboard = lazy(() => import("./pages/Dashboard/Dashboard"));
 const Home = lazy(() => import("./pages/Home"));
 const ChatListContainer = lazy(() => import("./pages/Chat/ChatListContainer"));
 const SearchPage = lazy(() => import("./pages/Search/SearchPage"));
-const Freinds = lazy(() => import("./pages/Friends/Freinds"));
+const Freinds = lazy(() => import("./pages/Friends/Friends"));
 const MessageBox = lazy(() => import("./pages/Chat/MessageBox"));
 const AuthLayout = lazy(() => import("./pages/Auth/AuthLayout"));
 const Auth = lazy(() => import("./pages/Auth/Auth"));
@@ -125,12 +125,17 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "update-profile",
-    element: (
-      <Suspense fallback={<Loader />}>
-        <UpdateProfile />
-      </Suspense>
-    ),
+    path: "user",
+    children: [
+      {
+        path: ":userId/update-profile",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <UpdateProfile />
+          </Suspense>
+        ),
+      },
+    ],
   },
 ]);
 

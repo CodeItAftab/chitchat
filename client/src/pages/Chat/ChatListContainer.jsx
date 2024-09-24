@@ -14,10 +14,10 @@ function ChatListContainer() {
     <div
       className={`chatList-container lg:h-full ${
         show ? "h-full" : "h-[calc(100%-100px)]"
-      }  lg:w-[calc(100%-64px)] w-full flex`}
+      }  lg:w-[calc(100%-64px)] w-full flex  `}
     >
       <div
-        className={`chats-container box-border overflow-auto  h-full lg:w-[340px] w-full bg-white  flex flex-col gap-1 ${
+        className={`chats-container box-border overflow-auto  h-full lg:w-[340px] w-full lg:bg-blue-100 bg-white  flex flex-col gap-1 ${
           show && "chats-container-hide"
         }`}
       >

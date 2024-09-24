@@ -14,7 +14,7 @@ function ChatListItem() {
 
   return (
     <li
-      className="chat-list-item hover:bg-[#ecedf1] h-[64px] w-full cursor-pointer  rounded-lg box-border mb-[2px] px-2 flex items-center overflow-hidden"
+      className="chat-list-item  bg-white h-[64px] w-full cursor-pointer  rounded-lg box-border mb-[2px] px-2 flex items-center overflow-hidden"
       onClick={() => {
         navigate("/inbox/dskjflkdsjfkl");
         dispatch(showMainBox(true));
