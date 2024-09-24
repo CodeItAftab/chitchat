@@ -10,13 +10,12 @@ import { useState } from "react";
 
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
 
 export default function Otp() {
   const [otp, setOtp] = useState(null);
 
   const dispatch = useDispatch();
-  const { isLoggedIn } = useSelector((state) => state.auth);
+  const { isLoggedIn, userId } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,23 +24,12 @@ export default function Otp() {
       const { payload } = await dispatch(
         verifyOtp({ email: getEmail, otp: otp })
       );
-      console.log(payload);
-      const { status, message, token, email, userId } = payload;
-      if (status === "success") {
-        toast.success(message);
-        dispatch(login({ isLoggedIn: true, token, email, userId }));
-      } else {
-        console.log(message);
-      }
       localStorage.removeItem("email");
     } catch (error) {
+      toast.error(error.message);
       console.log(error);
     }
   };
-
-  if (isLoggedIn) {
-    return <Navigate to={"/"} replace={true} />;
-  }
 
   return (
     <div className="w-full lg:grid  lg:grid-cols-2 h-full">

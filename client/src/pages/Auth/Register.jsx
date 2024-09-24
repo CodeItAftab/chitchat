@@ -1,20 +1,14 @@
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import googlLogo from "../../assets/google.svg";
-
-import PropTypes from "prop-types";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { login, loginUser, registerUser } from "@/app/slices/auth";
+import { registerUser } from "@/app/slices/auth";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-Auth.propTypes = {
-  isLoginPage: PropTypes.bool,
-};
-
-export default function Auth({ isLoginPage }) {
+export default function Register() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -25,41 +19,24 @@ export default function Auth({ isLoginPage }) {
   const navigate = useNavigate();
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!isLoginPage) {
-      try {
-        const { payload } = await dispatch(
-          registerUser({
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-          })
-        );
-        const { status, message } = payload;
-        if (status === "success") {
-          toast.success(message);
-          navigate("/auth/verify-otp");
-        } else if (status === "error") {
-          toast.error(message);
-        }
-      } catch (error) {
-        console.log(error);
+
+    try {
+      const { payload } = await dispatch(
+        registerUser({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        })
+      );
+      const { status, message } = payload;
+      if (status === "success") {
+        toast.success(message);
+        navigate("/auth/verify-otp");
+      } else if (status === "error") {
+        toast.error(message);
       }
-    } else {
-      try {
-        console.log("this worked");
-        const { payload } = await dispatch(
-          loginUser({ email: formData.email, password: formData.password })
-        );
-        const { status, token, email, userId, message } = payload;
-        if (status === "success") {
-          toast.success(message);
-          dispatch(login({ isLoggedIn: true, token, email, userId }));
-        } else if (status === "error") {
-          toast.error(message);
-        }
-      } catch (error) {
-        console.log(error);
-      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -72,39 +49,30 @@ export default function Auth({ isLoginPage }) {
       <div className="flex items-center justify-center lg:py-0 py-10 ">
         <div className="mx-auto grid w-[350px] gap-8">
           <div className="grid gap-4 text-center mb-4">
-            <h1 className="text-3xl font-bold">
-              {isLoginPage ? "Login" : "Register"}
-            </h1>
-            {isLoginPage ? (
-              <p className="text-balance text-muted-foreground leading-none">
-                Enter your email below to login to your account
-              </p>
-            ) : (
-              <p className="text-balance text-muted-foreground leading-none">
-                Enter your details to register
-              </p>
-            )}
+            <h1 className="text-3xl font-bold">Register</h1>
+
+            <p className="text-balance text-muted-foreground leading-none">
+              Enter your details to register
+            </p>
           </div>
           <form className="grid gap-4" onSubmit={handleSubmit}>
-            {!isLoginPage && (
-              <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  type="name"
-                  placeholder="Your Name"
-                  required
-                  className="border-slate-400"
-                  autoComplete="on"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData((prev) => {
-                      return { ...prev, name: e.target.value };
-                    })
-                  }
-                />
-              </div>
-            )}
+            <div className="grid gap-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                type="name"
+                placeholder="Your Name"
+                required
+                className="border-slate-400"
+                autoComplete="on"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData((prev) => {
+                    return { ...prev, name: e.target.value };
+                  })
+                }
+              />
+            </div>
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -140,16 +108,9 @@ export default function Auth({ isLoginPage }) {
                 }
               />
             </div>
-            {isLoginPage && (
-              <Link
-                to="/auth/reset-password"
-                className=" inline-block text-sm underline"
-              >
-                Forgot your password?
-              </Link>
-            )}
+
             <Button type="submit" className="w-full">
-              {isLoginPage ? "Login" : "Register"}
+              Register
             </Button>
             <Button
               variant="outline"
@@ -160,12 +121,9 @@ export default function Auth({ isLoginPage }) {
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
-            {isLoginPage ? "Don't" : "Already"} have an account?
-            <Link
-              to={isLoginPage ? "/auth/register" : "/auth/login"}
-              className="underline"
-            >
-              {isLoginPage ? "Sign up" : "Login"}
+            Already have an account?
+            <Link to={"/auth/login"} className="underline">
+              Login
             </Link>
           </div>
         </div>

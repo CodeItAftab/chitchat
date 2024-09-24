@@ -15,6 +15,7 @@ import {
   SignOut,
   GearSix,
   MoonStars,
+  Question,
 } from "phosphor-react";
 import {
   DropdownMenu,
@@ -45,10 +46,14 @@ function Navbar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const current_url = window.location.pathname;
+
   const showNavbar = useSelector((state) => state.app.showMainBox);
   return (
     <nav
-      className={` lg:h-full lg:w-20 w-full h-12 lg:bg-[#edf4ff] bg-white flex lg:flex-col justify-between z-[11]   navbar ${
+      className={` lg:h-full lg:w-20 w-full h-12 lg:bg-[#edf4ff] ${
+        current_url == "/search" ? "bg-blue-100" : "bg-white"
+      } flex lg:flex-col justify-between z-[11] lg:shadow-[0px_0px_2px_#00000026]   navbar ${
         showNavbar && "lg:flex hidden"
       }`}
     >
@@ -186,6 +191,11 @@ function Navbar() {
                     <li className="w-full h-[48px]  flex gap-2 text-lg leading-none items-center hover:text-[#1976d4]">
                       <GearSix size={20} />
                       Settings
+                    </li>
+                    <Separator />
+                    <li className="w-full h-[48px]  flex gap-2 text-lg leading-none items-center hover:text-[#1976d4]">
+                      <Question size={20} />
+                      Help
                     </li>
                     <Separator />
                     <li

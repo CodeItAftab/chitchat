@@ -126,11 +126,11 @@
   background-color: transparent;
 }
 
-
+/* 
 .chat-box,
 .people-you-may-know {
   box-shadow: -2px 0px 5px -5px #000000db;
-}
+} */
 
 
 @media only screen and (max-width: 1024px) {

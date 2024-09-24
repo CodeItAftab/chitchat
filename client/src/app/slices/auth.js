@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import toast from "react-hot-toast";
 
 const initialState = {
   isLoggedIn: false,
@@ -7,8 +8,8 @@ const initialState = {
   userId: undefined,
 };
 
-// const baseUrl = "http://localhost:3000";
-const baseUrl = "https://zfsfxh4s-3000.inc1.devtunnels.ms";
+const baseUrl = "http://localhost:3000";
+// const baseUrl = "https://zfsfxh4s-3000.inc1.devtunnels.ms";
 
 export const loginUser = createAsyncThunk(
   "/auth/loginUser",
@@ -60,7 +61,7 @@ export const registerUser = createAsyncThunk(
 
 export const verifyOtp = createAsyncThunk(
   "/auth/verifyOtp",
-  async (formData) => {
+  async (formData, { dispatch }) => {
     try {
       const res = await fetch(baseUrl + "/auth/verify-otp", {
         method: "POST",
@@ -68,7 +69,19 @@ export const verifyOtp = createAsyncThunk(
         body: JSON.stringify({ email: formData.email, otp: formData.otp }),
       });
       const data = await res.json();
-      return data;
+      const { status, email, token, message, userId } = data;
+      if (status === "success") {
+        toast.success(message, {
+          iconTheme: "green",
+        });
+        dispatch(
+          authSlice.actions.login({ isLoggedIn: true, email, token, userId })
+        );
+        return status;
+      } else {
+        toast.error(message);
+        console.log(message);
+      }
     } catch (error) {
       console.log(error);
       return error.message;

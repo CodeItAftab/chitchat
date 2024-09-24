@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
 
+const User = require("../models/user");
+
 exports.isAuth = async (req, res, next) => {
   let token;
 
@@ -19,8 +21,7 @@ exports.isAuth = async (req, res, next) => {
     return;
   }
 
-  const decoded = promisify(jwt.verify(token, process.env.JWT_SECRET));
-
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
   const this_user = await User.findOne({ _id: decoded.userId });
 
   if (!this_user) {
@@ -31,7 +32,7 @@ exports.isAuth = async (req, res, next) => {
     return;
   }
 
-  if (this_user.changedPasswordAfter(decode.iat)) {
+  if (this_user.changedPasswordAfter(decoded.iat)) {
     // logout other users after reseting the password.
     res.status(401).json({
       status: "error",

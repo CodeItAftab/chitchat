@@ -1,4 +1,4 @@
-const { Schema, model } = require("mongoose");
+const { Schema, model, default: mongoose } = require("mongoose");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
@@ -57,6 +57,19 @@ const userSchema = new Schema(
     },
     dob: {
       type: Date,
+    },
+    socket_id: {
+      type: String,
+    },
+    friends: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    ],
+    status: {
+      type: String,
+      enum: ["Online", "Offline"],
     },
   },
   {
